@@ -1608,6 +1608,12 @@ body.nav-open {
   display: flex;
   gap: 20px;
   overflow-x: auto;
+  /* explicit, not left to default: leaving this unset lets the browser's
+     overflow-x/y coupling rule auto-promote it to "auto" too, and the
+     .reveal cards' translateY(60px) then counts toward this container's
+     scrollable area (transforms affect scrollable overflow even off-axis),
+     so a stray vertical scrollbar flashes in during the reveal animation */
+  overflow-y: hidden;
   scroll-snap-type: x mandatory;
   padding-bottom: 8px;
 }
