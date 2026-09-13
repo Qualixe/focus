@@ -243,6 +243,7 @@ p {
   font-weight: 400;
   text-decoration: underline;
   padding-left: 5px;
+  color: inherit;
 }
 
 /* ================= header ================= */
