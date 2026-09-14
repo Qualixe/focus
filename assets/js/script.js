@@ -1,6 +1,4 @@
-// predictive search: filters the site's own product/collection/page data as
-// the user types, matching the real theme's Suggestions/Pages/Collections/
-// Products layout. There's no backend here, so this is a client-side index.
+// predictive search: filters the site's own product/collection/page data
 (function () {
   const input = document.getElementById("searchInput");
   const resultsEl = document.getElementById("searchResults");
@@ -109,29 +107,18 @@
   input.addEventListener("input", runSearch);
 })();
 
-// eased mouse-wheel scrolling for the whole page. CSS scroll-behavior:smooth
-// (already set on <html>) only smooths anchor/programmatic jumps — it does
-// nothing for ordinary wheel scrolling, which is what actually feels smooth
-// or not on a desktop mouse. Left untouched on touch devices (native touch
-// scroll is already smooth/inertial) and for reduced-motion users, and it
-// steps aside over anything that scrolls its own content (drawers, dropdown,
-// horizontal product carousels) so those keep their native wheel behavior.
 (function () {
   const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (isTouch || reduceMotion) return;
 
   const innerScrollSelector =
-    ".mobile-nav, .cart-drawer, .header__currency-list, .header__search-bar, .product-modal__inner";
-  // this one is separate from the blanket exclusions above: it only scrolls
-  // horizontally (scroll-snap-type: x), and Chrome's snap containers can
-  // absorb even a plain vertical mouse-wheel notch instead of letting it
-  // bubble to the page — so it's excluded only for genuinely horizontal
-  // gestures (trackpad swipe, shift+wheel), not a normal vertical scroll
+    ".mobile-nav, .cart-drawer, .header__currency-list, .header__search-bar, .product-modal__inner, .product-page__thumbs";
+
   const carouselSelector = ".product-row__scroller";
 
   // fixed per-frame multiplier (not time-based decay) — matches the exact
-  // glide feel of the reference implementation this was ported from
+  // easing algorithm used by the reference site (goodland-six.vercel.app)
   const ease = 0.1;
   const LINE_HEIGHT = 34; // px per "line" when a device reports DOM_DELTA_LINE
   let current = window.scrollY;
@@ -162,9 +149,6 @@
       return;
     }
 
-    // must be "instant" — the page has CSS scroll-behavior:smooth, and without
-    // this every single lerp frame would ALSO get browser-level smoothing on
-    // top of our own, compounding into stutter instead of clean motion
     window.scrollTo({ top: current, left: 0, behavior: "instant" });
     raf = requestAnimationFrame(step);
   }
@@ -172,6 +156,7 @@
   window.addEventListener(
     "wheel",
     (e) => {
+      if (document.body.classList.contains("nav-open")) return;
       if (e.target.closest(innerScrollSelector)) return;
       if (e.target.closest(carouselSelector) && Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       if (e.ctrlKey) return; // let pinch-zoom / ctrl+wheel zoom through untouched
@@ -183,8 +168,6 @@
     { passive: false }
   );
 
-  // stay in sync when scroll happens some other way (keyboard, scrollbar drag,
-  // anchor jump) so the next wheel tick continues from the right place
   window.addEventListener(
     "scroll",
     () => {
@@ -213,20 +196,12 @@
   }, 4000);
 })();
 
-// smooth accordion for the mobile nav's nested <details>, and the footer's
-// link columns on mobile — native open/close has no transition, so height is
-// animated manually while the real "open" attribute stays in sync (for the
-// chevron-rotate CSS and a11y). The footer columns are pointer-events:none
-// on desktop, so this simply never fires there.
 (function () {
   const summaries = document.querySelectorAll(
-    ".mobile-nav__details > summary, .footer__accordion > summary"
+    ".mobile-nav__details > summary, .footer__accordion > summary, .filter-drawer__group > summary, .product-modal__accordion > summary"
   );
   if (!summaries.length) return;
 
-  // the footer columns ship "open" in the HTML (so desktop always shows
-  // them, no JS required there) — on mobile widths, collapse them by
-  // default like a normal accordion, no animation needed for this
   if (window.matchMedia("(max-width: 900px)").matches) {
     document.querySelectorAll(".footer__accordion").forEach((details) => {
       details.removeAttribute("open");
@@ -237,8 +212,7 @@
     const details = summary.parentElement;
     const content = summary.nextElementSibling;
     if (!content) return;
-    // footer columns fade+slide alongside the height change, timed to match
-    // the real theme's collapsible (slower ease-out on open, quicker on close)
+
     const isFooter = details.classList.contains("footer__accordion");
 
     summary.addEventListener("click", (e) => {
@@ -329,12 +303,17 @@
   const cartClose = document.getElementById("cartClose");
   const cartDrawer = document.getElementById("cartDrawer");
 
+  const filterToggle = document.getElementById("collectionFilterToggle");
+  const filterClose = document.getElementById("filterDrawerClose");
+  const filterDrawer = document.getElementById("filterDrawer");
+
   const overlay = document.getElementById("navOverlay");
   if (!overlay) return;
 
   function closeAll() {
     mobileNav && mobileNav.classList.remove("is-open");
     cartDrawer && cartDrawer.classList.remove("is-open");
+    filterDrawer && filterDrawer.classList.remove("is-open");
     overlay.classList.remove("is-visible");
     document.body.classList.remove("nav-open");
   }
@@ -356,6 +335,10 @@
       openPanel(cartDrawer);
     });
   cartClose && cartClose.addEventListener("click", closeAll);
+
+  filterToggle &&
+    filterToggle.addEventListener("click", () => openPanel(filterDrawer));
+  filterClose && filterClose.addEventListener("click", closeAll);
 
   overlay.addEventListener("click", closeAll);
 
@@ -417,6 +400,7 @@
 
   function openCart() {
     mobileNav && mobileNav.classList.remove("is-open");
+    document.getElementById("filterDrawer")?.classList.remove("is-open");
     cartDrawer.classList.add("is-open");
     overlay.classList.add("is-visible");
     document.body.classList.add("nav-open");
@@ -459,6 +443,36 @@
   });
 
   render();
+})();
+
+(function () {
+  const minInput = document.getElementById("filterPriceMin");
+  const maxInput = document.getElementById("filterPriceMax");
+  const fill = document.getElementById("filterSliderFill");
+  const minLabel = document.getElementById("filterPriceMinLabel");
+  const maxLabel = document.getElementById("filterPriceMaxLabel");
+  if (!minInput || !maxInput || !fill) return;
+
+  function update() {
+    let min = Number(minInput.value);
+    let max = Number(maxInput.value);
+    if (min > max) {
+      [min, max] = [max, min];
+      minInput.value = min;
+      maxInput.value = max;
+    }
+    const range = Number(minInput.max) - Number(minInput.min);
+    const left = ((min - Number(minInput.min)) / range) * 100;
+    const right = ((max - Number(minInput.min)) / range) * 100;
+    fill.style.left = left + "%";
+    fill.style.right = 100 - right + "%";
+    minLabel.textContent = "$" + min;
+    maxLabel.textContent = "$" + max;
+  }
+
+  minInput.addEventListener("input", update);
+  maxInput.addEventListener("input", update);
+  update();
 })();
 
 // search bar dropdown
@@ -540,10 +554,23 @@
   const hero = document.querySelector(".shoppable-hero");
   if (!header) return;
 
+  if (!hero) {
+    header.classList.add("is-stuck", "header--no-hero");
+
+    const setHeaderHeightVar = () => {
+      document.documentElement.style.setProperty(
+        "--sticky-header-height",
+        header.offsetHeight + "px"
+      );
+    };
+    setHeaderHeightVar();
+    window.addEventListener("resize", setHeaderHeightVar);
+    if (document.fonts) document.fonts.ready.then(setHeaderHeightVar);
+    return;
+  }
+
   const onScroll = () => {
-    const threshold = hero
-      ? Math.max(hero.offsetHeight - header.offsetHeight, 80)
-      : 80;
+    const threshold = Math.max(hero.offsetHeight - header.offsetHeight, 80);
     header.classList.toggle("is-stuck", window.scrollY > threshold);
   };
 
@@ -600,9 +627,6 @@
       if (!isVisible) {
         target.classList.add("is-visible");
 
-        // hotspots near the left/right edge of the image would otherwise
-        // push the centered popover off-screen — nudge it back in, same
-        // idea as the real theme's anchor-positioning collision avoidance
         const margin = 12;
         const rect = target.getBoundingClientRect();
         let shift = 0;
@@ -620,8 +644,8 @@
 })();
 
 // quick view modal — opens from each product card's Quick View bar; reuses
-// the same manual height-animation technique as the footer/mobile-nav
-// accordions for its Description/Materials/Certifications/Shipping tabs
+// the same .product-page__* Swiper gallery markup as the standalone
+// product page, rebuilt per product via buildGallery()
 (function () {
   const PRODUCTS = {
   "lido-short": {
@@ -1033,10 +1057,20 @@
   const descParaEl = document.getElementById("quickViewDescPara");
   const bulletsEl = document.getElementById("quickViewBullets");
   const stylingTipEl = document.getElementById("quickViewStylingTip");
-  const mainImgEl = document.getElementById("quickViewMainImg");
-  const thumbsEl = document.getElementById("quickViewThumbs");
+  const thumbsEl = document.getElementById("quickViewThumbsSwiper");
+  const thumbsWrapperEl = document.getElementById("quickViewThumbsWrapper");
+  const mainEl = document.getElementById("quickViewMainSwiper");
+  const mainWrapperEl = document.getElementById("quickViewMainWrapper");
+  const mainColEl = modal.querySelector(".product-page__main-col");
   const accordionsEl = document.getElementById("quickViewAccordions");
   const addToCartBtn = document.getElementById("quickViewAddToCart");
+
+  // the gallery's two linked Swiper instances — same setup as the
+  // standalone product page's, just rebuilt from scratch on every
+  // populateModal() call since a different product's images replace the
+  // slides each time
+  let thumbsSwiper = null;
+  let mainSwiper = null;
 
   function openModal() {
     document.body.classList.add("nav-open");
@@ -1051,17 +1085,88 @@
     modal.classList.remove("is-open");
   }
 
-  function setThumb(images, index) {
-    mainImgEl.src = images[index];
-    thumbsEl.querySelectorAll("img").forEach((img, i) => {
-      img.classList.toggle("is-active", i === index);
+  function buildGallery(images) {
+    if (thumbsSwiper) {
+      thumbsSwiper.destroy(true, true);
+      thumbsSwiper = null;
+    }
+    if (mainSwiper) {
+      mainSwiper.destroy(true, true);
+      mainSwiper = null;
+    }
+
+    thumbsWrapperEl.innerHTML = images
+      .map((src) => `<div class="swiper-slide"><img src="${src}" alt=""></div>`)
+      .join("");
+    mainWrapperEl.innerHTML = images
+      .map((src) => `<div class="swiper-slide"><img src="${src}" alt=""></div>`)
+      .join("");
+
+    window.quickViewGallery = { images, index: 0 };
+
+    // deferred one frame for the same reason the product page's gallery
+    // defers its own init — Swiper measuring this modal's grid column
+    // before layout has settled latches onto a wrong (huge) width for the
+    // rest of the instance's life
+    requestAnimationFrame(() => {
+      thumbsSwiper = new Swiper(thumbsEl, {
+        direction: "vertical",
+        slidesPerView: "auto",
+        spaceBetween: 12,
+        freeMode: true,
+        watchSlidesProgress: true,
+        mousewheel: { forceToAxis: true },
+      });
+
+      mainSwiper = new Swiper(mainEl, {
+        speed: 300,
+        autoHeight: true,
+        thumbs: { swiper: thumbsSwiper },
+        navigation: {
+          prevEl: document.getElementById("quickViewMainPrev"),
+          nextEl: document.getElementById("quickViewMainNext"),
+        },
+        pagination: {
+          el: modal.querySelector(".product-page__main-pagination"),
+          clickable: true,
+        },
+      });
+
+      mainSwiper.on("slideChange", () => {
+        window.quickViewGallery.index = mainSwiper.activeIndex;
+      });
+
+      function syncThumbsHeight() {
+        if (!mainColEl) return;
+        thumbsEl.style.height = mainColEl.offsetHeight + "px";
+        thumbsSwiper.update();
+      }
+      syncThumbsHeight();
+      mainSwiper.on("slideChange", syncThumbsHeight);
+      mainSwiper.on("transitionEnd", syncThumbsHeight);
+      // autoHeight's own real height only lands after the active slide's
+      // image loads and Swiper recalculates — the syncThumbsHeight() call
+      // above runs synchronously before that, so on a fresh open it reads
+      // mainColEl.offsetHeight as 0 and never gets corrected without this
+      mainSwiper.on("autoHeight", syncThumbsHeight);
     });
-    if (window.quickViewGallery) window.quickViewGallery.index = index;
   }
 
-  // same manual scrollHeight-measure technique used for the footer and
-  // mobile-nav accordions — attached fresh each time the modal repopulates
-  // since this markup is rebuilt from scratch per product
+  // mobile-only zoom button that stands in for the hidden thumb rail —
+  // attached once since the button itself persists across buildGallery()
+  // rebuilds (only its slide markup is torn down/recreated)
+  const quickViewZoomBtn = document.getElementById("quickViewMainZoom");
+  quickViewZoomBtn &&
+    quickViewZoomBtn.addEventListener("click", () => {
+      const activeImg = mainEl.querySelector(".swiper-slide-active img");
+      if (activeImg) activeImg.click();
+    });
+
+  window.addEventListener("zoommodal:close", (e) => {
+    if (!modal.classList.contains("is-open") || !mainSwiper) return;
+    mainSwiper.slideTo(e.detail.index);
+  });
+
   function initAccordion(details) {
     const summary = details.querySelector("summary");
     const content = details.querySelector(".product-modal__accordion-content");
@@ -1132,23 +1237,9 @@
       stylingTipEl.hidden = true;
     }
 
-    thumbsEl.innerHTML = data.images
-      .map(
-        (src, i) =>
-          `<img src="${src}" alt="" class="${i === 0 ? "is-active" : ""}" data-index="${i}">`
-      )
-      .join("");
-    mainImgEl.src = data.images[0];
-    thumbsEl.querySelectorAll("img").forEach((img) => {
-      img.addEventListener("click", () =>
-        setThumb(data.images, Number(img.dataset.index))
-      );
-    });
-
-    // read by the image zoom modal (further down this file) when the main
-    // image is clicked, so it knows which product's photos to show and
-    // which one is currently active
-    window.quickViewGallery = { images: data.images, index: 0 };
+    // rebuilds the two linked Swiper instances from scratch and sets
+    // window.quickViewGallery to this product's images
+    buildGallery(data.images);
 
     accordionsEl.innerHTML = data.tabs
       .map(
@@ -1197,17 +1288,14 @@
   closeBtn.addEventListener("click", closeModal);
   overlay.addEventListener("click", closeModal);
   // the modal's own transparent backdrop area sits above the overlay
-  // element (higher z-index, needed so the centered box stays clickable),
-  // so a click landing directly on it — not bubbling from .product-modal__inner —
-  // also needs to close it
   modal.addEventListener("click", (e) => {
     if (e.target === modal) closeModal();
   });
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape" || !modal.classList.contains("is-open")) return;
     // the size chart modal and the image zoom modal both sit on top of this
-    // one — let their own handler close them first instead of dropping
-    // this modal at the same time
+    // one — let their own Escape handlers close them first instead of this
+    // modal closing underneath them
     const sizeChart = document.getElementById("sizeChartModal");
     if (sizeChart && sizeChart.classList.contains("is-open")) return;
     const imageZoom = document.getElementById("imageZoomModal");
@@ -1217,25 +1305,29 @@
 })();
 
 // size chart modal — opens on top of the quick view modal from its
-// "Size chart" trigger; shares the one static size table the real theme
-// also reuses across every product
+// "Size chart" link, but triggers are queried by class (not a single id)
+// so this also works from the standalone product page
 (function () {
-  const trigger = document.getElementById("quickViewSizeChart");
+  const triggers = document.querySelectorAll(".product-modal__size-chart");
   const sizeChart = document.getElementById("sizeChartModal");
   const closeBtn = document.getElementById("sizeChartClose");
-  if (!trigger || !sizeChart) return;
+  if (!triggers.length || !sizeChart) return;
 
   function open() {
     sizeChart.classList.add("is-open");
+    document.body.classList.add("nav-open");
   }
 
   function close() {
     sizeChart.classList.remove("is-open");
+    document.body.classList.remove("nav-open");
   }
 
-  trigger.addEventListener("click", (e) => {
-    e.preventDefault();
-    open();
+  triggers.forEach((trigger) => {
+    trigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      open();
+    });
   });
 
   closeBtn.addEventListener("click", close);
@@ -1247,11 +1339,23 @@
   });
 })();
 
+// size selector (XS–XL) inside the .product-modal__size-box — same static
+// toggle-only behavior on both the quick-view modal and the standalone
+// product page, queried by class since both share this markup
+(function () {
+  document.querySelectorAll(".product-modal__size-options").forEach((group) => {
+    group.addEventListener("click", (e) => {
+      const btn = e.target.closest(".product-modal__size-option");
+      if (!btn) return;
+      group
+        .querySelectorAll(".product-modal__size-option")
+        .forEach((el) => el.classList.remove("is-selected"));
+      btn.classList.add("is-selected");
+    });
+  });
+})();
+
 // image zoom modal — custom-built with the project's own Swiper instance
-// instead of PhotoSwipe. Opens from the quick view modal's main image;
-// slides are rebuilt from window.quickViewGallery each time it opens, and
-// the Swiper instance is destroyed/recreated with them since the image
-// count differs per product.
 (function () {
   const modal = document.getElementById("imageZoomModal");
   const swiperEl = document.getElementById("imageZoomSwiper");
@@ -1259,8 +1363,8 @@
   const closeBtn = document.getElementById("imageZoomClose");
   const prevBtn = document.getElementById("imageZoomPrev");
   const nextBtn = document.getElementById("imageZoomNext");
-  const mainImg = document.getElementById("quickViewMainImg");
-  if (!modal || !swiperEl || !mainImg || typeof Swiper === "undefined") return;
+  const mainContainers = document.querySelectorAll(".product-page__main");
+  if (!modal || !swiperEl || !mainContainers.length || typeof Swiper === "undefined") return;
 
   let zoomSwiper = null;
 
@@ -1284,12 +1388,12 @@
       speed: 250,
     });
 
-    // Swiper's zoom module defaults to double-click/double-tap; the real
-    // theme's popup zoomed on a single click, so this toggles it directly.
-    // A plain "click" listener would also fire after a drag-to-pan gesture
-    // (mouseup lands back on the same element), instantly toggling the zoom
-    // back off — so only toggle when the pointer barely moved, i.e. it was
-    // actually a click and not a pan.
+    zoomSwiper.on("zoomChange", (swiper, scale, imageEl) => {
+      const container = imageEl && imageEl.closest(".swiper-zoom-container");
+      if (!container) return;
+      container.classList.toggle("swiper-zoom-container--zoomed", scale > 1);
+    });
+
     wrapperEl.querySelectorAll(".swiper-zoom-container img").forEach((img) => {
       let downX = 0;
       let downY = 0;
@@ -1308,17 +1412,28 @@
   }
 
   function close() {
+
+    if (zoomSwiper && window.quickViewGallery) {
+      window.quickViewGallery.index = zoomSwiper.activeIndex;
+      window.dispatchEvent(
+        new CustomEvent("zoommodal:close", { detail: { index: zoomSwiper.activeIndex } })
+      );
+    }
+
     modal.classList.remove("is-open");
     document.body.classList.remove("nav-open");
-    if (zoomSwiper) {
-      zoomSwiper.destroy(true, true);
-      zoomSwiper = null;
-    }
+
+    const swiperToDestroy = zoomSwiper;
+    zoomSwiper = null;
+    setTimeout(() => swiperToDestroy && swiperToDestroy.destroy(true, true), 333);
   }
 
-  mainImg.addEventListener("click", () => {
-    if (!window.quickViewGallery) return;
-    open(window.quickViewGallery.images, window.quickViewGallery.index);
+  mainContainers.forEach((container) => {
+    container.addEventListener("click", (e) => {
+      if (e.target.tagName !== "IMG") return;
+      if (!window.quickViewGallery) return;
+      open(window.quickViewGallery.images, window.quickViewGallery.index);
+    });
   });
 
   closeBtn.addEventListener("click", close);
@@ -1327,5 +1442,109 @@
   });
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && modal.classList.contains("is-open")) close();
+  });
+})();
+
+(function () {
+  const thumbsEl = document.getElementById("productThumbsSwiper");
+  const mainEl = document.getElementById("productMainSwiper");
+  if (!thumbsEl || !mainEl || typeof Swiper === "undefined") return;
+
+  window.quickViewGallery = {
+    images: [...mainEl.querySelectorAll(".swiper-slide img")].map((img) => img.src),
+    index: 0,
+  };
+
+  requestAnimationFrame(() => {
+    const thumbsSwiper = new Swiper(thumbsEl, {
+      direction: "vertical",
+      slidesPerView: "auto",
+      spaceBetween: 12,
+      freeMode: true,
+      watchSlidesProgress: true,
+      mousewheel: { forceToAxis: true },
+    });
+
+    const mainSwiper = new Swiper(mainEl, {
+      speed: 300,
+      autoHeight: true,
+      thumbs: { swiper: thumbsSwiper },
+      navigation: {
+        prevEl: document.getElementById("productMainPrev"),
+        nextEl: document.getElementById("productMainNext"),
+      },
+      pagination: {
+        el: document.querySelector(".product-page__main-pagination"),
+        clickable: true,
+      },
+    });
+
+    mainSwiper.on("slideChange", () => {
+      window.quickViewGallery.index = mainSwiper.activeIndex;
+    });
+
+    window.addEventListener("zoommodal:close", (e) => {
+      mainSwiper.slideTo(e.detail.index);
+    });
+
+    // scoped from mainEl itself, not a bare document-wide lookup — the
+    // quick-view modal embedded on this same page also has its own
+    // .product-page__main-col, and an unscoped query would grab that
+    // hidden (0-height) one instead of this page's real gallery
+    const mainColEl = mainEl.closest(".product-page__main-col");
+    function syncThumbsHeight() {
+      if (!mainColEl) return;
+      thumbsEl.style.height = mainColEl.offsetHeight + "px";
+      thumbsSwiper.update();
+    }
+    syncThumbsHeight();
+    mainSwiper.on("slideChange", syncThumbsHeight);
+    mainSwiper.on("transitionEnd", syncThumbsHeight);
+    // autoHeight's own real height only lands after the active slide's
+    // image loads and Swiper recalculates — the syncThumbsHeight() call
+    // above runs synchronously before that, so on a fresh page load it
+    // reads mainColEl.offsetHeight as 0 and never gets corrected without this
+    mainSwiper.on("autoHeight", syncThumbsHeight);
+    window.addEventListener("resize", syncThumbsHeight);
+
+    // mobile-only zoom button (CSS hides it on desktop, where clicking the
+    // main image directly already opens zoom)
+    const zoomBtn = document.getElementById("productMainZoom");
+    zoomBtn &&
+      zoomBtn.addEventListener("click", () => {
+        const activeImg = mainEl.querySelector(".swiper-slide-active img");
+        if (activeImg) activeImg.click();
+      });
+  });
+})();
+
+(function () {
+  const btn = document.getElementById("productAddToCart");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    const { id, name, price, image } = btn.dataset;
+    window.dispatchEvent(
+      new CustomEvent("quickview:addtocart", {
+        detail: { id, name, price: parseFloat(price), image },
+      })
+    );
+  });
+})();
+
+// testimonials carousel — centered active card at full scale, neighbors
+// scaled down slightly (see .testimonials__card / .swiper-slide-active)
+(function () {
+  const el = document.querySelector(".testimonials__slider");
+  if (!el || typeof Swiper === "undefined") return;
+
+  new Swiper(el, {
+    slidesPerView: "auto",
+    centeredSlides: true,
+    loop: true,
+    grabCursor: true,
+    pagination: {
+      el: document.querySelector(".testimonials__pagination"),
+      clickable: true,
+    },
   });
 })();

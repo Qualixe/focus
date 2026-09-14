@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Impulse | Home</title>
+	<title>Impulse | Collections</title>
 	<!-- link css -->
 	<link rel="stylesheet" href="./assets/css/swiper-bundle.min.css">
 	<link rel="stylesheet" href="./assets/css/style.css">
@@ -651,6 +651,105 @@
 			<button type="button" class="btn cart-drawer__checkout" id="cartCheckout">Check out</button>
 		</div>
 	</div>
+
+	<!-- filter drawer (collection page only) -->
+	<div class="filter-drawer" id="filterDrawer">
+		<div class="filter-drawer__header">
+			<h2>Filter</h2>
+			<button class="filter-drawer__close" id="filterDrawerClose" aria-label="Close filters">
+				<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M4 4l12 12M16 4L4 16" stroke="currentColor" stroke-width="1.4" />
+				</svg>
+			</button>
+		</div>
+
+		<div class="filter-drawer__body">
+			<details class="filter-drawer__group">
+				<summary>Price
+					<svg class="chevron" viewBox="0 0 28 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor" fill="none" />
+					</svg>
+				</summary>
+				<div class="filter-drawer__content">
+					<div class="filter-drawer__price">
+						<div class="filter-drawer__price-labels">
+							<span id="filterPriceMinLabel">$0</span>
+							<span id="filterPriceMaxLabel">$214</span>
+						</div>
+						<div class="filter-drawer__slider">
+							<div class="filter-drawer__slider-track"></div>
+							<div class="filter-drawer__slider-fill" id="filterSliderFill"></div>
+							<input type="range" class="filter-drawer__range" id="filterPriceMin" min="0" max="214" value="0"
+								aria-label="Minimum price">
+							<input type="range" class="filter-drawer__range" id="filterPriceMax" min="0" max="214" value="214"
+								aria-label="Maximum price">
+						</div>
+					</div>
+				</div>
+			</details>
+
+			<details class="filter-drawer__group">
+				<summary>Size
+					<svg class="chevron" viewBox="0 0 28 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor" fill="none" />
+					</svg>
+				</summary>
+				<div class="filter-drawer__content">
+					<label class="filter-drawer__checkbox"><input type="checkbox"> XS <span
+							class="filter-drawer__count">(2)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> S <span
+							class="filter-drawer__count">(2)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> M <span
+							class="filter-drawer__count">(2)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> L <span
+							class="filter-drawer__count">(2)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> XL <span
+							class="filter-drawer__count">(2)</span></label>
+				</div>
+			</details>
+
+			<details class="filter-drawer__group">
+				<summary>Product type
+					<svg class="chevron" viewBox="0 0 28 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor" fill="none" />
+					</svg>
+				</summary>
+				<div class="filter-drawer__content">
+					<label class="filter-drawer__checkbox"><input type="checkbox"> Blouse <span
+							class="filter-drawer__count">(1)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> Camisole <span
+							class="filter-drawer__count">(1)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> Linen Set <span
+							class="filter-drawer__count">(1)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> Linen Shirt <span
+							class="filter-drawer__count">(1)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> Long-Sleeve Top <span
+							class="filter-drawer__count">(2)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> Overshirt <span
+							class="filter-drawer__count">(1)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> Sweater <span
+							class="filter-drawer__count">(1)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> Tank <span
+							class="filter-drawer__count">(2)</span></label>
+					<label class="filter-drawer__checkbox"><input type="checkbox"> Tee <span
+							class="filter-drawer__count">(5)</span></label>
+				</div>
+			</details>
+
+			<details class="filter-drawer__group">
+				<summary>Availability
+					<svg class="chevron" viewBox="0 0 28 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor" fill="none" />
+					</svg>
+				</summary>
+				<div class="filter-drawer__content">
+					<label class="filter-drawer__checkbox"><input type="checkbox"> In stock <span
+							class="filter-drawer__count">(15)</span></label>
+				</div>
+			</details>
+		</div>
+	</div>
+
 	<!-- shared drawer overlay backdrop -->
 	<div class="nav-overlay" id="navOverlay"></div>
 
@@ -866,118 +965,43 @@
 	<!-- image zoom modal end -->
 
 	<main>
-		<!-- shoppable hero start -->
-		<section class="shoppable-hero">
-			<img src="./assets/images/hero/hero-main.jpg" alt="" class="shoppable-hero__img desktop_only">
-			<img src="./assets/images/hero/hero-mobile-img.webp" alt="hero-mobile-img.webp"
-				class="shoppable-hero__img mobile_only">
-			<div class="shoppable-hero__hotspot"
-				style="--hotspot-top:53%; --hotspot-left:25%; --hotspot-top-mobile:43%; --hotspot-left-mobile:10%;">
-				<button class="shoppable-hero__dot" data-target="hotspot-1" aria-label="The Riva Tank">
-					<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-						<path fill="#444"
-							d="M17.409 8.929h-6.695V2.258c0-.566-.506-1.029-1.071-1.029s-1.071.463-1.071 1.029v6.671H1.967C1.401 8.929.938 9.435.938 10s.463 1.071 1.029 1.071h6.605V17.7c0 .566.506 1.029 1.071 1.029s1.071-.463 1.071-1.029v-6.629h6.695c.566 0 1.029-.506 1.029-1.071s-.463-1.071-1.029-1.071z" />
-					</svg>
-				</button>
-				<div class="shoppable-hero__popover" id="hotspot-1">
-					<div class="shoppable-hero__popover-body">
-						<p class="shoppable-hero__popover-title">The Riva Tank</p>
-						<div class="shoppable-hero__popover-prices"><span>$62</span></div>
-					</div>
-					<div class="shoppable-hero__popover-footer">
-						<a href="#" class="shoppable-hero__popover-link">View product
-							<svg viewBox="0 0 284.49 498.98" aria-hidden="true">
-								<path fill="currentColor"
-									d="M35 498.98a35 35 0 0 1-24.75-59.75l189.74-189.74L10.25 59.75a35.002 35.002 0 0 1 49.5-49.5l214.49 214.49a35 35 0 0 1 0 49.5L59.75 488.73A34.89 34.89 0 0 1 35 498.98Z" />
-							</svg>
-						</a>
-					</div>
-				</div>
-			</div>
 
-			<div class="shoppable-hero__hotspot"
-				style="--hotspot-top:49%; --hotspot-left:58%; --hotspot-top-mobile:34%; --hotspot-left-mobile:38%;">
-				<button class="shoppable-hero__dot" data-target="hotspot-2" aria-label="The Lena Midi">
-					<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-						<path fill="#444"
-							d="M17.409 8.929h-6.695V2.258c0-.566-.506-1.029-1.071-1.029s-1.071.463-1.071 1.029v6.671H1.967C1.401 8.929.938 9.435.938 10s.463 1.071 1.029 1.071h6.605V17.7c0 .566.506 1.029 1.071 1.029s1.071-.463 1.071-1.029v-6.629h6.695c.566 0 1.029-.506 1.029-1.071s-.463-1.071-1.029-1.071z" />
-					</svg>
-				</button>
-				<div class="shoppable-hero__popover" id="hotspot-2">
-					<div class="shoppable-hero__popover-body">
-						<p class="shoppable-hero__popover-title">The Lena Midi</p>
-						<div class="shoppable-hero__popover-prices"><span>$168</span></div>
-					</div>
-					<div class="shoppable-hero__popover-footer">
-						<a href="#" class="shoppable-hero__popover-link">View product
-							<svg viewBox="0 0 284.49 498.98" aria-hidden="true">
-								<path fill="currentColor"
-									d="M35 498.98a35 35 0 0 1-24.75-59.75l189.74-189.74L10.25 59.75a35.002 35.002 0 0 1 49.5-49.5l214.49 214.49a35 35 0 0 1 0 49.5L59.75 488.73A34.89 34.89 0 0 1 35 498.98Z" />
-							</svg>
-						</a>
-					</div>
+		<!-- collection promo banner start -->
+		<section class="collection-promo">
+			<div class="collection-promo__inner container">
+				<h2>Save on Select Styles</h2>
+				<div class="collection-promo__row">
+					<p>Take an extra 10% off sale items — limited time</p>
+					<a href="#" class="collection-promo__btn">Shop now</a>
 				</div>
-			</div>
-			<div class="shoppable-hero__hotspot"
-				style="--hotspot-top:67%; --hotspot-left:77%; --hotspot-top-mobile:45%; --hotspot-left-mobile:83%;">
-				<button class="shoppable-hero__dot" data-target="hotspot-3" aria-label="The Cami">
-					<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-						<path fill="#444"
-							d="M17.409 8.929h-6.695V2.258c0-.566-.506-1.029-1.071-1.029s-1.071.463-1.071 1.029v6.671H1.967C1.401 8.929.938 9.435.938 10s.463 1.071 1.029 1.071h6.605V17.7c0 .566.506 1.029 1.071 1.029s1.071-.463 1.071-1.029v-6.629h6.695c.566 0 1.029-.506 1.029-1.071s-.463-1.071-1.029-1.071z" />
-					</svg>
-				</button>
-				<div class="shoppable-hero__popover" id="hotspot-3">
-					<div class="shoppable-hero__popover-body">
-						<p class="shoppable-hero__popover-title">The Cami</p>
-						<div class="shoppable-hero__popover-prices"><span>$58</span></div>
-					</div>
-					<div class="shoppable-hero__popover-footer">
-						<a href="#" class="shoppable-hero__popover-link">View product
-							<svg viewBox="0 0 284.49 498.98" aria-hidden="true">
-								<path fill="currentColor"
-									d="M35 498.98a35 35 0 0 1-24.75-59.75l189.74-189.74L10.25 59.75a35.002 35.002 0 0 1 49.5-49.5l214.49 214.49a35 35 0 0 1 0 49.5L59.75 488.73A34.89 34.89 0 0 1 35 498.98Z" />
-							</svg>
-						</a>
-					</div>
-				</div>
-			</div>
-
-			<div class="shoppable-hero__content reveal">
-				<h2>Easy by design</h2>
-				<p>Soft texture, effortless movement, warm-weather pieces designed to be worn on repeat.</p>
-				<a href="#" class="btn">Shop Linen</a>
 			</div>
 		</section>
-		<!-- shoppable hero end -->
+		<!-- collection promo banner end -->
 
-		<!-- category grid start -->
-		<section class="category-grid container">
-			<a href="#" class="category-grid__item reveal" style="--i:0">
-				<img src="./assets/images/categories/category-tops.jpg" alt="Tops">
-				<span>Tops</span>
-			</a>
-			<a href="#" class="category-grid__item reveal" style="--i:1">
-				<img src="./assets/images/categories/category-bottoms.jpg" alt="Bottoms">
-				<span>Bottoms</span>
-			</a>
-			<a href="#" class="category-grid__item reveal" style="--i:2">
-				<img src="./assets/images/categories/category-dresses.jpg" alt="Dresses">
-				<span>Dresses</span>
-			</a>
-			<a href="#" class="category-grid__item reveal" style="--i:3">
-				<img src="./assets/images/categories/category-layers.jpg" alt="Layers">
-				<span>Layers</span>
-			</a>
-		</section>
-		<!-- category grid end -->
-
-		<!-- everyday essentials start -->
-		<section class="product-row container">
-			<div class="product-row__head reveal">
-				<h2>Everyday Essentials</h2>
-				<a href="#" class="product-row__view-all">View all</a>
+		<!-- collection toolbar + product grid start -->
+		<section class="collection-products container">
+			<div class="collection-toolbar">
+				<button type="button" class="collection-toolbar__filter" id="collectionFilterToggle">
+					<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path
+							d="M48 42h10m-10 0a5 5 0 1 1-5-5 5 5 0 0 1 5 5ZM7 42h31M16 22H6m10 0a5 5 0 1 1 5 5 5 5 0 0 1-5-5Zm41 0H26"
+							stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+					</svg>
+					Filter
+				</button>
+				<div class="collection-toolbar__count">10 products</div>
+				<div class="collection-toolbar__sort">
+					<select id="collectionSort" aria-label="Sort by">
+						<option value="best-selling" selected>Best selling</option>
+						<option value="title-ascending">Alphabetically, A-Z</option>
+						<option value="title-descending">Alphabetically, Z-A</option>
+						<option value="price-ascending">Price, low to high</option>
+						<option value="price-descending">Price, high to low</option>
+					</select>
+				</div>
 			</div>
-			<div class="product-row__scroller">
+
+			<div class="collection-products__grid">
 				<div class="product-card reveal" style="--i:0">
 					<span class="product-card__badge product-card__badge--sale">Sale</span>
 					<div class="product-card__img-wrap">
@@ -1038,7 +1062,7 @@
 					</div>
 				</div>
 
-				<div class="product-card reveal" style="--i:4">
+				<div class="product-card reveal" style="--i:0">
 					<span class="product-card__badge product-card__badge--sale">Sale</span>
 					<div class="product-card__img-wrap">
 						<img src="./assets/images/products/product-vela-shirt.png" alt="The Vela Shirt">
@@ -1054,39 +1078,7 @@
 					</div>
 				</div>
 
-			</div>
-		</section>
-		<!-- everyday essentials end -->
-
-		<!-- promo grid start -->
-		<section class="promo-grid">
-			<a href="#" class="promo-grid__item reveal" style="--i:0">
-				<img src="./assets/images/banners/promo-dresses.jpg" alt="Dresses for every day">
-				<div class="promo-grid__content">
-					<h2>Dresses for every day</h2>
-					<p>Easy silhouettes for slow mornings, summer dinners, and everything in between.</p>
-					<span class="btn">Shop Dresses</span>
-				</div>
-			</a>
-			<a href="#" class="promo-grid__item reveal" style="--i:1">
-				<img src="./assets/images/banners/promo-layers.jpg" alt="Thoughtful layers">
-				<div class="promo-grid__content">
-					<h2>Thoughtful layers</h2>
-					<p>Soft knits, relaxed tailoring, and lightweight pieces to throw on and go.</p>
-					<span class="btn">Shop layers</span>
-				</div>
-			</a>
-		</section>
-		<!-- promo grid end -->
-
-		<!-- all new start -->
-		<section class="product-row container">
-			<div class="product-row__head reveal">
-				<h2>All New</h2>
-				<a href="#" class="product-row__view-all">View all</a>
-			</div>
-			<div class="product-row__scroller">
-				<div class="product-card reveal" style="--i:0">
+				<div class="product-card reveal" style="--i:1">
 					<div class="product-card__img-wrap">
 						<img src="./assets/images/products/product-wren-coat.png" alt="The Wren Coat">
 						<img src="./assets/images/products/product-wren-coat-hover.png" alt="" class="product-card__img--hover">
@@ -1099,7 +1091,8 @@
 						<span>$286</span>
 					</div>
 				</div>
-				<div class="product-card reveal" style="--i:1">
+
+				<div class="product-card reveal" style="--i:2">
 					<div class="product-card__img-wrap">
 						<img src="./assets/images/products/product-ceru-knit.png" alt="The Ceru Knit">
 						<img src="./assets/images/products/product-ceru-knit-hover.png" alt="" class="product-card__img--hover">
@@ -1112,7 +1105,8 @@
 						<span>$148</span>
 					</div>
 				</div>
-				<div class="product-card reveal" style="--i:2">
+
+				<div class="product-card reveal" style="--i:3">
 					<div class="product-card__img-wrap">
 						<img src="./assets/images/products/product-hana-overshirt.png" alt="The Hana Overshirt">
 						<img src="./assets/images/products/product-hana-overshirt-hover.png" alt=""
@@ -1126,7 +1120,8 @@
 						<span>$164</span>
 					</div>
 				</div>
-				<div class="product-card reveal" style="--i:3">
+
+				<div class="product-card reveal" style="--i:0">
 					<div class="product-card__img-wrap">
 						<img src="./assets/images/products/product-lark-jacket.png" alt="The Lark Jacket">
 						<img src="./assets/images/products/product-lark-jacket-hover.png" alt="" class="product-card__img--hover">
@@ -1139,7 +1134,8 @@
 						<span>$204</span>
 					</div>
 				</div>
-				<div class="product-card reveal" style="--i:4">
+
+				<div class="product-card reveal" style="--i:1">
 					<div class="product-card__img-wrap">
 						<img src="./assets/images/products/product-eno-cardigan.png" alt="The Eno Cardigan">
 						<img src="./assets/images/products/product-eno-cardigan-hover.png" alt="" class="product-card__img--hover">
@@ -1154,107 +1150,8 @@
 				</div>
 			</div>
 		</section>
-		<!-- all new end -->
+		<!-- collection toolbar + product grid end -->
 
-		<!-- lookbook hero start -->
-		<section class="lookbook-hero">
-			<div class="lookbook-hero__video-wrap">
-				<video src="./assets/videos/lookbook-banner.mp4" autoplay muted loop playsinline></video>
-			</div>
-			<div class="lookbook-hero__content reveal">
-				<h2>Made to move with ease</h2>
-				<p>Quiet texture, warm light, and pieces designed for slower days.</p>
-				<a href="#" class="btn">Explore the lookbook</a>
-			</div>
-		</section>
-		<!-- lookbook hero end -->
-
-		<!-- journal feature row start -->
-		<section class="journal-row container">
-			<div class="journal-row__images reveal">
-				<img src="./assets/images/banners/journal-cover.jpg" alt="" class="journal-row__img journal-row__img--front">
-				<img src="./assets/images/banners/journal-dress.png" alt="" class="journal-row__img journal-row__img--back">
-			</div>
-			<div class="journal-row__text reveal">
-				<h2>Inside the journal</h2>
-				<p>Explore styling ideas, seasonal notes, and content-rich stories that bring our collections to life.</p>
-				<a href="#" class="btn">Read more</a>
-			</div>
-		</section>
-		<!-- journal feature row end -->
-
-		<!-- parallax banner start -->
-		<section class="wide-banner">
-			<img src="./assets/images/banners/banner-dresses-wide.png" alt="" class="wide-banner__img">
-			<div class="wide-banner__overlay"></div>
-			<div class="wide-banner__content reveal">
-				<h2>Easy to wear, easy to return to</h2>
-				<p>Soft shapes and understated details for everyday dressing and smaller occasions.</p>
-				<a href="#" class="btn btn--inverse">Shop dresses</a>
-			</div>
-		</section>
-		<!-- parallax banner end -->
-
-		<!-- collection image grid start -->
-		<section class="collection-grid container">
-			<a href="#" class="collection-grid__item reveal" style="--i:0">
-				<img src="./assets/images/categories/category-linen.jpg" alt="The Linen Edit">
-				<span>The Linen Edit</span>
-			</a>
-			<a href="#" class="collection-grid__item reveal" style="--i:1">
-				<img src="./assets/images/grid/grid-soft-neutrals.jpg" alt="Soft Neutrals">
-				<span>Soft Neutrals</span>
-			</a>
-			<a href="#" class="collection-grid__item reveal" style="--i:2">
-				<img src="./assets/images/grid/grid-everyday-dresses.jpg" alt="Everyday Dresses">
-				<span>Everyday Dresses</span>
-			</a>
-			<a href="#" class="collection-grid__item reveal" style="--i:3">
-				<img src="./assets/images/categories/category-layers.jpg" alt="Thoughtful Layers">
-				<span>Thoughtful Layers</span>
-			</a>
-			<a href="#" class="collection-grid__item reveal" style="--i:0">
-				<img src="./assets/images/banners/lookbook-banner.jpg" alt="The Lookbook">
-				<span>The Lookbook</span>
-			</a>
-			<a href="#" class="collection-grid__item reveal" style="--i:1">
-				<img src="./assets/images/grid/grid-journal.jpg" alt="Journal">
-				<span>Journal</span>
-			</a>
-		</section>
-		<!-- collection image grid end -->
-
-		<!-- brand values start -->
-		<section class="brand-values">
-			<div class="brand-values__item reveal" style="--i:0">
-				<svg class="brand-values__icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path
-						d="M23.896 30.268c7.289 0 13.198-5.94 13.198-13.268 0 7.328 5.909 13.268 13.198 13.268-7.29 0-13.198 5.94-13.198 13.268 0-7.328-5.91-13.268-13.198-13.268ZM15 72.271c6.443 0 11.667-5.25 11.667-11.728 0 6.477 5.223 11.728 11.666 11.728-6.443 0-11.666 5.251-11.666 11.729 0-6.478-5.224-11.729-11.667-11.729Zm28.438-16.2c11.477 0 20.78-9.353 20.78-20.892 0 11.539 9.305 20.892 20.782 20.892-11.477 0-20.781 9.354-20.781 20.892 0-11.538-9.304-20.892-20.781-20.892Z"
-						stroke="currentColor" stroke-width="2" />
-				</svg>
-				<h3>Quietly considered</h3>
-				<p>Understated details that bring polish without asking for attention.</p>
-			</div>
-			<div class="brand-values__item reveal" style="--i:1">
-				<svg class="brand-values__icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path
-						d="M50 82V66.516m0 0c-17.66 5.051-25.761-5.526-27.861-12.043M50 66.516a17.074 17.074 0 0 0-1.157-3.138c-1.927-4.012-5.85-8.56-12.469-10.24a19.532 19.532 0 0 0-2.585-.488M50 66.516c17.396 5.21 26.15-5.987 28.388-12.318M50 66.516c.222-.956.59-2.03 1.102-3.138 1.892-4.026 5.843-8.568 12.655-10.13h.007a18.86 18.86 0 0 1 2.343-.399m-43.968 1.624a18.624 18.624 0 0 1-.208-.688c4.58-1.294 8.51-1.562 11.858-1.135m-11.65 1.823C17.897 52.423 15 48.26 15 43.463c0-6.841 5.891-12.388 13.168-12.388 1.511 0 2.96.241 4.311.682m1.31 20.893c-1.809-3.469-2.848-7.557-2.848-11.94 0-3.18.547-6.208 1.538-8.953m45.937 22.372s-.014.048-.028.069m.028-.069c-4.79-1.376-8.864-1.693-12.31-1.28m12.31 1.28c-.007.02-.014.048-.028.069m0 0C82.338 52.065 85 48.053 85 43.462c0-6.84-5.898-12.387-13.168-12.387-1.511 0-2.96.241-4.311.682m-1.414 21.092c1.871-3.51 2.952-7.673 2.952-12.14 0-3.179-.547-6.207-1.538-8.952m-35.042 0C35.39 23.664 42.141 18 50 18c7.86 0 14.61 5.664 17.52 13.757"
-						stroke="currentColor" stroke-width="2" />
-				</svg>
-				<h3>Texture you can feel</h3>
-				<p>From airy linen to soft knits, each fabric adds warmth, ease, and depth.</p>
-			</div>
-			<div class="brand-values__item reveal" style="--i:2">
-				<svg class="brand-values__icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path
-						d="M79.7 25.248c-7.057-6.991-18.504-6.991-25.562 0l-4.144 4.106-4.145-4.106c-7.057-6.998-18.498-6.998-25.556 0a17.79 17.79 0 0 0 0 25.323l4.145 4.106L50 80l25.562-25.323 4.145-4.106a17.79 17.79 0 0 0 0-25.323H79.7Z"
-						stroke="currentColor" stroke-width="2" />
-				</svg>
-				<h3>Made for repeat wear</h3>
-				<p>Simple pieces, thoughtful layers, and a wardrobe that feels natural to come back to.</p>
-			</div>
-		</section>
-		<!-- brand values end -->
 	</main>
 
 	<!-- footer start -->
