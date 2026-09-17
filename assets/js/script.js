@@ -198,7 +198,7 @@
 
 (function () {
   const summaries = document.querySelectorAll(
-    ".mobile-nav__details > summary, .footer__accordion > summary, .filter-drawer__group > summary, .product-modal__accordion > summary"
+    ".mobile-nav__details > summary, .footer__accordion > summary, .filter-drawer__group > summary, .product-modal__accordion > summary, .faq-page__item > summary"
   );
   if (!summaries.length) return;
 
@@ -643,9 +643,7 @@
   document.addEventListener("click", resetPopovers);
 })();
 
-// quick view modal — opens from each product card's Quick View bar; reuses
-// the same .product-page__* Swiper gallery markup as the standalone
-// product page, rebuilt per product via buildGallery()
+// quick view modal — opens from each product card's Quick View bar;
 (function () {
   const PRODUCTS = {
   "lido-short": {
@@ -1065,10 +1063,7 @@
   const accordionsEl = document.getElementById("quickViewAccordions");
   const addToCartBtn = document.getElementById("quickViewAddToCart");
 
-  // the gallery's two linked Swiper instances — same setup as the
-  // standalone product page's, just rebuilt from scratch on every
-  // populateModal() call since a different product's images replace the
-  // slides each time
+  // the gallery's two linked Swiper instances
   let thumbsSwiper = null;
   let mainSwiper = null;
 
@@ -1105,9 +1100,6 @@
     window.quickViewGallery = { images, index: 0 };
 
     // deferred one frame for the same reason the product page's gallery
-    // defers its own init — Swiper measuring this modal's grid column
-    // before layout has settled latches onto a wrong (huge) width for the
-    // rest of the instance's life
     requestAnimationFrame(() => {
       thumbsSwiper = new Swiper(thumbsEl, {
         direction: "vertical",
@@ -1144,17 +1136,11 @@
       syncThumbsHeight();
       mainSwiper.on("slideChange", syncThumbsHeight);
       mainSwiper.on("transitionEnd", syncThumbsHeight);
-      // autoHeight's own real height only lands after the active slide's
-      // image loads and Swiper recalculates — the syncThumbsHeight() call
-      // above runs synchronously before that, so on a fresh open it reads
-      // mainColEl.offsetHeight as 0 and never gets corrected without this
       mainSwiper.on("autoHeight", syncThumbsHeight);
     });
   }
 
-  // mobile-only zoom button that stands in for the hidden thumb rail —
-  // attached once since the button itself persists across buildGallery()
-  // rebuilds (only its slide markup is torn down/recreated)
+  // mobile-only zoom button that stands in for the hidden thumb rail
   const quickViewZoomBtn = document.getElementById("quickViewMainZoom");
   quickViewZoomBtn &&
     quickViewZoomBtn.addEventListener("click", () => {
@@ -1293,9 +1279,6 @@
   });
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape" || !modal.classList.contains("is-open")) return;
-    // the size chart modal and the image zoom modal both sit on top of this
-    // one — let their own Escape handlers close them first instead of this
-    // modal closing underneath them
     const sizeChart = document.getElementById("sizeChartModal");
     if (sizeChart && sizeChart.classList.contains("is-open")) return;
     const imageZoom = document.getElementById("imageZoomModal");
@@ -1304,9 +1287,6 @@
   });
 })();
 
-// size chart modal — opens on top of the quick view modal from its
-// "Size chart" link, but triggers are queried by class (not a single id)
-// so this also works from the standalone product page
 (function () {
   const triggers = document.querySelectorAll(".product-modal__size-chart");
   const sizeChart = document.getElementById("sizeChartModal");
@@ -1339,9 +1319,6 @@
   });
 })();
 
-// size selector (XS–XL) inside the .product-modal__size-box — same static
-// toggle-only behavior on both the quick-view modal and the standalone
-// product page, queried by class since both share this markup
 (function () {
   document.querySelectorAll(".product-modal__size-options").forEach((group) => {
     group.addEventListener("click", (e) => {
@@ -1486,11 +1463,6 @@
     window.addEventListener("zoommodal:close", (e) => {
       mainSwiper.slideTo(e.detail.index);
     });
-
-    // scoped from mainEl itself, not a bare document-wide lookup — the
-    // quick-view modal embedded on this same page also has its own
-    // .product-page__main-col, and an unscoped query would grab that
-    // hidden (0-height) one instead of this page's real gallery
     const mainColEl = mainEl.closest(".product-page__main-col");
     function syncThumbsHeight() {
       if (!mainColEl) return;
@@ -1500,15 +1472,10 @@
     syncThumbsHeight();
     mainSwiper.on("slideChange", syncThumbsHeight);
     mainSwiper.on("transitionEnd", syncThumbsHeight);
-    // autoHeight's own real height only lands after the active slide's
-    // image loads and Swiper recalculates — the syncThumbsHeight() call
-    // above runs synchronously before that, so on a fresh page load it
-    // reads mainColEl.offsetHeight as 0 and never gets corrected without this
     mainSwiper.on("autoHeight", syncThumbsHeight);
     window.addEventListener("resize", syncThumbsHeight);
 
-    // mobile-only zoom button (CSS hides it on desktop, where clicking the
-    // main image directly already opens zoom)
+    // mobile-only zoom button
     const zoomBtn = document.getElementById("productMainZoom");
     zoomBtn &&
       zoomBtn.addEventListener("click", () => {
@@ -1531,8 +1498,7 @@
   });
 })();
 
-// testimonials carousel — centered active card at full scale, neighbors
-// scaled down slightly (see .testimonials__card / .swiper-slide-active)
+// testimonials carousel
 (function () {
   const el = document.querySelector(".testimonials__slider");
   if (!el || typeof Swiper === "undefined") return;
@@ -1546,5 +1512,127 @@
       el: document.querySelector(".testimonials__pagination"),
       clickable: true,
     },
+  });
+})();
+
+// faq page: category tabs + live search across all questions
+(function () {
+  const tabs = document.querySelectorAll(".faq-page__tab");
+  const panels = document.querySelectorAll(".faq-page__panel");
+  const panelsWrap = document.getElementById("faqPanels");
+  if (!tabs.length || !panels.length || !panelsWrap) return;
+
+  function activateTab(tab) {
+    tabs.forEach((t) => t.classList.remove("is-active"));
+    panels.forEach((p) => (p.hidden = true));
+    tab.classList.add("is-active");
+    document.getElementById(tab.dataset.tab).hidden = false;
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => activateTab(tab));
+  });
+
+  const searchInput = document.getElementById("faqSearch");
+  const tabsWrap = document.getElementById("faqTabs");
+  const noResults = document.getElementById("faqNoResults");
+  const allItems = document.querySelectorAll(".faq-page__item");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.trim().toLowerCase();
+
+      if (!query) {
+        tabsWrap.hidden = false;
+        panelsWrap.classList.remove("is-filtered");
+        const activeTab = document.querySelector(".faq-page__tab.is-active") || tabs[0];
+        activateTab(activeTab);
+        allItems.forEach((item) => (item.hidden = false));
+        noResults.hidden = true;
+        return;
+      }
+
+      tabsWrap.hidden = true;
+      panelsWrap.classList.add("is-filtered");
+      panels.forEach((p) => (p.hidden = false));
+
+      let matchCount = 0;
+      allItems.forEach((item) => {
+        const matches = item.textContent.toLowerCase().includes(query);
+        item.hidden = !matches;
+        if (matches) matchCount++;
+      });
+      noResults.hidden = matchCount > 0;
+    });
+  }
+})();
+
+// find a store page: region tabs + live search across all locations
+(function () {
+  const tabs = document.querySelectorAll(".store-page__tab");
+  const panels = document.querySelectorAll(".store-page__panel");
+  const panelsWrap = document.getElementById("storePanels");
+  if (!tabs.length || !panels.length || !panelsWrap) return;
+
+  function activateTab(tab) {
+    tabs.forEach((t) => t.classList.remove("is-active"));
+    panels.forEach((p) => (p.hidden = true));
+    tab.classList.add("is-active");
+    document.getElementById(tab.dataset.tab).hidden = false;
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => activateTab(tab));
+  });
+
+  const searchInput = document.getElementById("storeSearch");
+  const tabsWrap = document.getElementById("storeTabs");
+  const noResults = document.getElementById("storeNoResults");
+  const allCards = document.querySelectorAll(".store-page__card");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.trim().toLowerCase();
+
+      if (!query) {
+        tabsWrap.hidden = false;
+        panelsWrap.classList.remove("is-filtered");
+        const activeTab = document.querySelector(".store-page__tab.is-active") || tabs[0];
+        activateTab(activeTab);
+        allCards.forEach((card) => (card.hidden = false));
+        noResults.hidden = true;
+        return;
+      }
+
+      tabsWrap.hidden = true;
+      panelsWrap.classList.add("is-filtered");
+      panels.forEach((p) => (p.hidden = false));
+
+      let matchCount = 0;
+      allCards.forEach((card) => {
+        const matches = card.textContent.toLowerCase().includes(query);
+        card.hidden = !matches;
+        if (matches) matchCount++;
+      });
+      noResults.hidden = matchCount > 0;
+    });
+  }
+})();
+
+// shipping & returns policy page: Shipping / Returns tabs
+(function () {
+  const tabs = document.querySelectorAll(".policy-page__tab");
+  const panels = document.querySelectorAll(".policy-page__panel");
+  if (!tabs.length || !panels.length) return;
+
+  function activateTab(tab) {
+    tabs.forEach((t) => t.classList.remove("is-active"));
+    panels.forEach((p) => (p.hidden = true));
+    tab.classList.add("is-active");
+    document.getElementById(tab.dataset.tab).hidden = false;
+  }
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => activateTab(tab));
   });
 })();

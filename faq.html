@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Impulse | Contact Us</title>
+	<title>Impulse | Faq's</title>
 	<!-- link css -->
 	<link rel="stylesheet" href="./assets/css/swiper-bundle.min.css">
 	<link rel="stylesheet" href="./assets/css/style.css">
@@ -657,66 +657,266 @@
 
 	<main>
 
-		<!-- contact icon items start -->
-		<section class="contact-icons">
-			<div class="contact-icons__inner container">
-				<div class="contact-icons__head reveal">
-					<h1>Contact Us</h1>
-				</div>
-				<div class="contact-icons__grid">
-					<div class="contact-icons__item reveal" style="--i:0">
-						<span class="contact-icons__icon">
-							<img src="./assets/images/contact/store.png" alt="">
-						</span>
-						<h2>Visit store</h2>
-						<p><strong>Flagship store:</strong> 142 Greene Street, SoHo, New York, NY 10012</p>
-					</div>
-					<div class="contact-icons__item reveal" style="--i:1">
-						<span class="contact-icons__icon">
-							<img src="./assets/images/contact/gmail.png" alt="">
-						</span>
-						<h2>Email us</h2>
-						<p>Have a quick question ? Send us a message on E-Mail: <strong>hello@impulse.com</strong></p>
-					</div>
-					<div class="contact-icons__item reveal" style="--i:2">
-						<span class="contact-icons__icon">
-							<img src="./assets/images/contact/smartphone.png" alt="">
-						</span>
-						<h2>Call Us</h2>
-						<p>Directly for immediate assistance: <strong>Mon–Fri, 9am–6pm EST.</strong> <strong>call
-								(212) 555-0148</strong></p>
-					</div>
-				</div>
-			</div>
-		</section>
-		<!-- contact icon items end -->
+		<!-- faq page start -->
+		<section class="faq-page">
+			<div class="faq-page__inner">
 
-		<!-- get in touch start -->
-		<section class="contact-touch">
-			<div class="contact-touch__inner container">
-				<div class="contact-touch__head reveal">
-					<h2>Get In Touch</h2>
+				<div class="faq-page__intro reveal">
+					<h1>Frequently Asked Questions</h1>
+					<p>Everything you need to know about ordering, shipping, returns, and finding your fit. Can't find your
+						answer below? Our team is one message away.</p>
+
+					<div class="faq-page__search">
+						<svg class="faq-page__search-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M47.16 28.58A18.58 18.58 0 1 1 28.58 10a18.58 18.58 0 0 1 18.58 18.58ZM54 54 41.94 42"
+								stroke="currentColor" stroke-width="4"></path>
+						</svg>
+						<input type="search" id="faqSearch" placeholder="Search questions..." aria-label="Search FAQs">
+					</div>
 				</div>
-				<form class="contact-touch__form reveal" onsubmit="return false;">
-					<div class="contact-touch__row">
-						<div class="contact-touch__field">
-							<input type="text" placeholder="Name" required>
-						</div>
-						<div class="contact-touch__field">
-							<input type="email" placeholder="Email" required>
-						</div>
+
+				<div class="faq-page__tabs reveal" id="faqTabs">
+					<button type="button" class="faq-page__tab is-active" data-tab="faqOrders">
+						<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M32 8 8 18v28l24 10 24-10V18L32 8Z" stroke="currentColor" stroke-width="3.5"
+								stroke-linejoin="round"></path>
+							<path d="M8 18l24 10 24-10M32 28v30" stroke="currentColor" stroke-width="3.5"
+								stroke-linejoin="round"></path>
+							<path d="M20 13l24 10" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"></path>
+						</svg>
+						Orders &amp; Shipping
+					</button>
+					<button type="button" class="faq-page__tab" data-tab="faqReturns">
+						<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M12 32a20 20 0 1 1 5.86 14.14" stroke="currentColor" stroke-width="3.5"
+								stroke-linecap="round"></path>
+							<path d="M10 44V32h12" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"
+								stroke-linejoin="round"></path>
+						</svg>
+						Returns &amp; Exchanges
+					</button>
+					<button type="button" class="faq-page__tab" data-tab="faqSizing">
+						<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<rect x="8" y="24" width="48" height="16" rx="2" stroke="currentColor"
+								stroke-width="3.5"></rect>
+							<path d="M16 24v6M24 24v10M32 24v6M40 24v10M48 24v6" stroke="currentColor" stroke-width="3.5"
+								stroke-linecap="round"></path>
+						</svg>
+						Sizing &amp; Fit
+					</button>
+				</div>
+
+				<div class="faq-page__panels" id="faqPanels">
+
+					<div class="faq-page__panel" id="faqOrders">
+						<details class="faq-page__item" open>
+							<summary class="faq-page__item-summary">
+								<span class="faq-page__item-text">
+									<span class="faq-page__item-tag">Orders &amp; Shipping</span>
+									How long does shipping take?
+								</span>
+								<svg class="chevron faq-page__item-chevron" viewBox="0 0 28 16" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor"
+										fill="none" />
+								</svg>
+							</summary>
+							<div class="faq-page__item-content">
+								<p>Standard shipping takes 5–7 business days, and express shipping arrives in 2–3 business
+									days. Orders placed before 2pm EST ship the same day.</p>
+							</div>
+						</details>
+						<details class="faq-page__item">
+							<summary class="faq-page__item-summary">
+								<span class="faq-page__item-text">
+									<span class="faq-page__item-tag">Orders &amp; Shipping</span>
+									Do you offer free shipping?
+								</span>
+								<svg class="chevron faq-page__item-chevron" viewBox="0 0 28 16" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor"
+										fill="none" />
+								</svg>
+							</summary>
+							<div class="faq-page__item-content">
+								<p>Yes — complimentary standard shipping applies automatically to all orders over $100.</p>
+							</div>
+						</details>
+						<details class="faq-page__item">
+							<summary class="faq-page__item-summary">
+								<span class="faq-page__item-text">
+									<span class="faq-page__item-tag">Orders &amp; Shipping</span>
+									Can I change or cancel my order?
+								</span>
+								<svg class="chevron faq-page__item-chevron" viewBox="0 0 28 16" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor"
+										fill="none" />
+								</svg>
+							</summary>
+							<div class="faq-page__item-content">
+								<p>Changes are possible within one hour of purchase. After that, our fulfilment team
+									begins processing right away and we're no longer able to make edits.</p>
+							</div>
+						</details>
+						<details class="faq-page__item">
+							<summary class="faq-page__item-summary">
+								<span class="faq-page__item-text">
+									<span class="faq-page__item-tag">Orders &amp; Shipping</span>
+									Do you ship internationally?
+								</span>
+								<svg class="chevron faq-page__item-chevron" viewBox="0 0 28 16" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor"
+										fill="none" />
+								</svg>
+							</summary>
+							<div class="faq-page__item-content">
+								<p>We currently ship to Canada, the US, the UK, and Australia. Rates and delivery
+									windows vary by destination and are shown at checkout.</p>
+							</div>
+						</details>
 					</div>
-					<div class="contact-touch__field">
-						<input type="tel" placeholder="Phone Number">
+
+					<div class="faq-page__panel" id="faqReturns" hidden>
+						<details class="faq-page__item" open>
+							<summary class="faq-page__item-summary">
+								<span class="faq-page__item-text">
+									<span class="faq-page__item-tag">Returns &amp; Exchanges</span>
+									What is your return policy?
+								</span>
+								<svg class="chevron faq-page__item-chevron" viewBox="0 0 28 16" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor"
+										fill="none" />
+								</svg>
+							</summary>
+							<div class="faq-page__item-content">
+								<p>Items are accepted for return within thirty days of delivery. They must be unworn,
+									unwashed, and have the original tags attached.</p>
+							</div>
+						</details>
+						<details class="faq-page__item">
+							<summary class="faq-page__item-summary">
+								<span class="faq-page__item-text">
+									<span class="faq-page__item-tag">Returns &amp; Exchanges</span>
+									How do I start a return?
+								</span>
+								<svg class="chevron faq-page__item-chevron" viewBox="0 0 28 16" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor"
+										fill="none" />
+								</svg>
+							</summary>
+							<div class="faq-page__item-content">
+								<p>Start a return through our online returns portal. Once approved, you'll receive a
+									prepaid shipping label by email within twenty-four hours.</p>
+							</div>
+						</details>
+						<details class="faq-page__item">
+							<summary class="faq-page__item-summary">
+								<span class="faq-page__item-text">
+									<span class="faq-page__item-tag">Returns &amp; Exchanges</span>
+									Can I exchange for a different size or colour?
+								</span>
+								<svg class="chevron faq-page__item-chevron" viewBox="0 0 28 16" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor"
+										fill="none" />
+								</svg>
+							</summary>
+							<div class="faq-page__item-content">
+								<p>Yes, exchanges for a different size or colour are available free of charge through
+									the same returns portal.</p>
+							</div>
+						</details>
+						<details class="faq-page__item">
+							<summary class="faq-page__item-summary">
+								<span class="faq-page__item-text">
+									<span class="faq-page__item-tag">Returns &amp; Exchanges</span>
+									When will I receive my refund?
+								</span>
+								<svg class="chevron faq-page__item-chevron" viewBox="0 0 28 16" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor"
+										fill="none" />
+								</svg>
+							</summary>
+							<div class="faq-page__item-content">
+								<p>Refunds are processed within five business days of us receiving your returned item,
+									back to your original payment method.</p>
+							</div>
+						</details>
 					</div>
-					<div class="contact-touch__field">
-						<textarea placeholder="Comment" rows="5"></textarea>
+
+					<div class="faq-page__panel" id="faqSizing" hidden>
+						<details class="faq-page__item" open>
+							<summary class="faq-page__item-summary">
+								<span class="faq-page__item-text">
+									<span class="faq-page__item-tag">Sizing &amp; Fit</span>
+									How do I find my size?
+								</span>
+								<svg class="chevron faq-page__item-chevron" viewBox="0 0 28 16" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor"
+										fill="none" />
+								</svg>
+							</summary>
+							<div class="faq-page__item-content">
+								<p>Every product page includes detailed measurements alongside our sizing
+									recommendations — use both together to find the fit that suits your preference.</p>
+							</div>
+						</details>
+						<details class="faq-page__item">
+							<summary class="faq-page__item-summary">
+								<span class="faq-page__item-text">
+									<span class="faq-page__item-tag">Sizing &amp; Fit</span>
+									Do your clothes run true to size?
+								</span>
+								<svg class="chevron faq-page__item-chevron" viewBox="0 0 28 16" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor"
+										fill="none" />
+								</svg>
+							</summary>
+							<div class="faq-page__item-content">
+								<p>Most of our styles fit true to size. Where a particular piece runs small, large, or
+									oversized by design, that's always noted on the product page.</p>
+							</div>
+						</details>
+						<details class="faq-page__item">
+							<summary class="faq-page__item-summary">
+								<span class="faq-page__item-text">
+									<span class="faq-page__item-tag">Sizing &amp; Fit</span>
+									What if something doesn't fit?
+								</span>
+								<svg class="chevron faq-page__item-chevron" viewBox="0 0 28 16" fill="none"
+									xmlns="http://www.w3.org/2000/svg">
+									<path d="m1.57 1.59 12.76 12.77L27.1 1.59" stroke-width="2" stroke="currentColor"
+										fill="none" />
+								</svg>
+							</summary>
+							<div class="faq-page__item-content">
+								<p>No problem — free exchanges through our returns portal make it easy to swap for a
+									different size at no extra cost.</p>
+							</div>
+						</details>
 					</div>
-					<button type="submit" class="btn contact-touch__submit">Send</button>
-				</form>
+
+					<p class="faq-page__no-results" id="faqNoResults" hidden>No questions match your search. Try a
+						different keyword, or <a href="contact.html">reach out to our team</a>.</p>
+
+				</div>
+
+				<div class="faq-page__cta reveal">
+					<h2>Still have questions?</h2>
+					<p>Our customer care team typically responds within one business day.</p>
+					<a href="contact.html" class="btn">Contact Support</a>
+				</div>
+
 			</div>
 		</section>
-		<!-- get in touch end -->
+		<!-- faq page end -->
 
 	</main>
 
