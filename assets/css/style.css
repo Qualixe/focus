@@ -2248,6 +2248,7 @@ body.nav-open {
   .brand-values {
     grid-template-columns: 1fr;
     gap: 50px;
+    padding: 0 16px;
   }
 }
 
@@ -3901,6 +3902,7 @@ body.nav-open {
 
   .about-intro {
     margin-top: 40px;
+    padding: 0 16px;
   }
 
   .about-intro h1 {
@@ -4502,6 +4504,7 @@ body.nav-open {
 @media (max-width: 900px) {
   .lookbook-intro {
     margin-top: 40px;
+    padding: 0 16px;
   }
 
   .lookbook-intro h1 {
@@ -4787,7 +4790,7 @@ body.nav-open {
 
 @media (max-width: 900px) {
   .faq-page__inner {
-    padding: 40px 24px;
+    padding: 40px 16px;
   }
 
   .faq-page__intro h1 {
@@ -5090,7 +5093,7 @@ body.nav-open {
 
 @media (max-width: 900px) {
   .store-page__inner {
-    padding: 40px 24px;
+    padding: 40px 16px;
   }
 
   .store-page__intro h1 {
@@ -5361,7 +5364,7 @@ body.nav-open {
 
 @media (max-width: 900px) {
   .policy-page__inner {
-    padding: 40px 24px;
+    padding: 40px 16px;
   }
 
   .policy-page__intro h1 {
@@ -5521,7 +5524,7 @@ body.nav-open {
 
 @media (max-width: 900px) {
   .terms-page__inner {
-    padding: 40px 24px;
+    padding: 40px 16px;
   }
 
   .terms-page__intro h1 {
@@ -5708,7 +5711,7 @@ body.nav-open {
 
 @media (max-width: 900px) {
   .career-page__inner {
-    padding: 40px 24px;
+    padding: 40px 16px;
   }
 
   .career-page__intro h1 {
@@ -5895,7 +5898,7 @@ body.nav-open {
 
 @media (max-width: 900px) {
   .sustainability-page__inner {
-    padding: 40px 24px;
+    padding: 40px 16px;
   }
 
   .sustainability-page__hero-banner .wide-banner__content h2 {
