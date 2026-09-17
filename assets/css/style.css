@@ -1285,7 +1285,7 @@ body.nav-open {
   overflow: hidden;
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 1160px) {
   .only-desktop {
     display: none !important;
   }
