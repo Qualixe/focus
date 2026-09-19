@@ -547,36 +547,108 @@
   });
 })();
 
-// sticky header — switches from transparent hero-overlay to solid bar
-// once scrolled past the shoppable hero section
+// sticky announcement bar + header
+//  - desktop: the announcement bar is pinned to the top of the viewport
+//  - the header scrolls away with the page; past STICK_AT it becomes a fixed
+//    white bar that slides in under the announcement bar (from the very top on
+//    mobile, where the announcement bar isn't sticky), and snaps back once
+//    you scroll back up to STICK_AT or less
 (function () {
   const header = document.getElementById("siteHeader");
-  const hero = document.querySelector(".shoppable-hero");
   if (!header) return;
 
-  if (!hero) {
-    header.classList.add("is-stuck", "header--no-hero");
+  const STICK_AT = 250;
+  const bar = document.querySelector(".announcement-bar");
+  const mainRow = header.querySelector(".header__main");
+  const isSolid = header.classList.contains("header--solid");
+  const smallScreen = window.matchMedia("(max-width: 768px)");
+  let stuck = false;
+  let openTimer = 0;
+  let spacer = null;
+  let holder = null;
 
-    const setHeaderHeightVar = () => {
-      document.documentElement.style.setProperty(
-        "--sticky-header-height",
-        header.offsetHeight + "px"
-      );
-    };
-    setHeaderHeightVar();
-    window.addEventListener("resize", setHeaderHeightVar);
-    if (document.fonts) document.fonts.ready.then(setHeaderHeightVar);
-    return;
+  // sticky elements elsewhere on the page (collection toolbar, product
+  // gallery) must sit below whatever is pinned to the top of the viewport
+  function updateOffsets() {
+    const barHeight =
+      bar && bar.classList.contains("announcement-bar--sticky") ? bar.offsetHeight : 0;
+    document.documentElement.style.setProperty(
+      "--sticky-header-height",
+      barHeight + mainRow.offsetHeight + "px"
+    );
   }
 
-  const onScroll = () => {
-    const threshold = Math.max(hero.offsetHeight - header.offsetHeight, 80);
-    header.classList.toggle("is-stuck", window.scrollY > threshold);
-  };
+  function updateAnnouncement() {
+    if (!bar) return;
+    const sticky = !smallScreen.matches;
+    bar.classList.toggle("announcement-bar--sticky", sticky);
+    if (sticky && !spacer) {
+      spacer = document.createElement("div");
+      bar.after(spacer);
+    }
+    if (spacer) spacer.style.height = sticky ? bar.offsetHeight + "px" : "0";
+    document.body.style.setProperty(
+      "--sticky-announcement-bar-height",
+      sticky ? bar.offsetHeight + "px" : "0px"
+    );
+    updateOffsets();
+  }
 
+  // an in-flow header leaves a hole in the page when it turns fixed, so it
+  // sits inside a holder that keeps the space it used to take up
+  function syncHolder() {
+    if (!holder || stuck) return;
+    holder.style.minHeight = "0";
+    holder.style.minHeight = header.offsetHeight + "px";
+  }
+
+  if (isSolid) {
+    holder = document.createElement("div");
+    header.parentNode.insertBefore(holder, header);
+    holder.appendChild(header);
+    syncHolder();
+  }
+
+  function onScroll() {
+    if (window.scrollY > STICK_AT) {
+      if (stuck) return;
+      stuck = true;
+      header.classList.add("is-stuck");
+      openTimer = setTimeout(() => header.classList.add("is-opening"), 100);
+    } else {
+      if (!stuck) return;
+      stuck = false;
+      clearTimeout(openTimer);
+      header.classList.remove("is-opening", "is-stuck");
+    }
+  }
+
+  updateAnnouncement();
   onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll);
+
+  let scrollQueued = false;
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (scrollQueued) return;
+      scrollQueued = true;
+      requestAnimationFrame(() => {
+        scrollQueued = false;
+        onScroll();
+      });
+    },
+    { passive: true }
+  );
+
+  smallScreen.addEventListener("change", updateAnnouncement);
+  if ("ResizeObserver" in window) {
+    const resizeObserver = new ResizeObserver(() => {
+      syncHolder();
+      updateAnnouncement();
+    });
+    resizeObserver.observe(header);
+    if (bar) resizeObserver.observe(bar);
+  }
 })();
 
 // scroll reveal animations (fade + rise, staggered via --i)
