@@ -1711,3 +1711,104 @@
     tab.addEventListener("click", () => activateTab(tab));
   });
 })();
+
+
+// welcome popup: shown once, when a visitor lands on the site for the first time (any page)
+(function () {
+  const STORAGE_KEY = "focus-welcome-popup-seen";
+  const SHOW_DELAY = 2000;
+
+  // no readable storage (e.g. blocked cookies) means we can't remember the visit, so don't nag
+  try {
+    if (localStorage.getItem(STORAGE_KEY)) return;
+  } catch (err) {
+    return;
+  }
+
+  const popup = document.createElement("div");
+  popup.className = "welcome-popup";
+  popup.setAttribute("aria-hidden", "true");
+  popup.innerHTML = `
+    <div class="welcome-popup__inner" role="dialog" aria-modal="true" aria-labelledby="welcomePopupTitle" tabindex="-1">
+      <button type="button" class="welcome-popup__close" aria-label="Close">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="m1 1 18 18M19 1 1 19" stroke="currentColor" stroke-width="1.6" />
+        </svg>
+      </button>
+      <h2 class="welcome-popup__title" id="welcomePopupTitle">Welcome to Focus</h2>
+      <p class="welcome-popup__text">Sign up to receive 10% off your first order, plus early access to new arrivals and seasonal edits.</p>
+      <form class="welcome-popup__form">
+        <input type="email" placeholder="Enter your email" aria-label="Email address" required>
+        <button type="submit" class="btn welcome-popup__submit">Subscribe</button>
+      </form>
+      <a href="look-book.html" class="btn welcome-popup__lookbook">View the lookbook</a>
+    </div>`;
+  document.body.appendChild(popup);
+
+  const inner = popup.querySelector(".welcome-popup__inner");
+  const closeBtn = popup.querySelector(".welcome-popup__close");
+  const form = popup.querySelector(".welcome-popup__form");
+  let previousFocus = null;
+
+  function open() {
+    // another overlay (mobile menu, cart, quick view...) is already open: wait for it to close
+    if (document.body.classList.contains("nav-open")) {
+      setTimeout(open, 1000);
+      return;
+    }
+
+    // remembered as soon as it appears, so following the lookbook link or reloading won't show it again
+    try {
+      localStorage.setItem(STORAGE_KEY, "1");
+    } catch (err) {}
+
+    previousFocus = document.activeElement;
+    popup.classList.add("is-open");
+    popup.setAttribute("aria-hidden", "false");
+    document.body.classList.add("nav-open");
+    inner.focus({ preventScroll: true });
+  }
+
+  function close() {
+    popup.classList.remove("is-open");
+    popup.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("nav-open");
+    if (previousFocus && document.contains(previousFocus)) previousFocus.focus({ preventScroll: true });
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const success = document.createElement("p");
+    success.className = "welcome-popup__success";
+    success.setAttribute("role", "status");
+    success.textContent = "Thanks for subscribing!";
+    form.replaceWith(success);
+  });
+
+  closeBtn.addEventListener("click", close);
+  popup.addEventListener("click", (e) => {
+    if (e.target === popup) close();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (!popup.classList.contains("is-open")) return;
+    if (e.key === "Escape") {
+      close();
+      return;
+    }
+    if (e.key !== "Tab") return;
+
+    // keep keyboard focus inside the dialog while it is open
+    const focusable = inner.querySelectorAll("button, input, a[href]");
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === inner)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+
+  setTimeout(open, SHOW_DELAY);
+})();
