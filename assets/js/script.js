@@ -352,7 +352,6 @@
   const cartItemsEl = document.getElementById("cartItems");
   const cartEmptyEl = document.getElementById("cartEmpty");
   const cartFooterEl = document.getElementById("cartFooter");
-  const cartNoteWrapEl = document.getElementById("cartNoteWrap");
   const cartSubtotalEl = document.getElementById("cartSubtotal");
   const cartCountEl = document.querySelector(".header__cart-count");
   const cartDrawer = document.getElementById("cartDrawer");
@@ -370,7 +369,6 @@
     const hasItems = cart.length > 0;
     cartEmptyEl.hidden = hasItems;
     cartFooterEl.hidden = !hasItems;
-    cartNoteWrapEl.hidden = !hasItems;
 
     cartItemsEl.innerHTML = cart
       .map(
@@ -395,7 +393,10 @@
     cartSubtotalEl.textContent = formatPrice(subtotal);
 
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
-    if (cartCountEl) cartCountEl.textContent = count;
+    // the header cart icon shows a dot (not a number) while the cart has items, like the reference
+    if (cartCountEl) cartCountEl.classList.toggle("is-visible", count > 0);
+    const cartBtn = document.getElementById("cartToggle");
+    if (cartBtn) cartBtn.setAttribute("aria-label", count > 0 ? "Cart, " + count + (count === 1 ? " item" : " items") : "Cart");
   }
 
   function openCart() {
@@ -1523,7 +1524,9 @@
         nextEl: document.getElementById("productMainNext"),
       },
       pagination: {
-        el: document.querySelector(".product-page__main-pagination"),
+        // the quick-view modal on this page has a pagination element of the same class and comes first in the DOM,
+        // so look inside this gallery's own column instead of the whole document
+        el: mainEl.closest(".product-page__main-col").querySelector(".product-page__main-pagination"),
         clickable: true,
       },
     });
