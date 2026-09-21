@@ -523,7 +523,40 @@
   if (!items.length) return;
 
   let closeTimer = null;
+  const pointer = { x: 0, y: 0 };
   const isDesktop = () => window.matchMedia("(min-width: 901px)").matches;
+
+  document.addEventListener(
+    "mousemove",
+    (e) => {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+    },
+    { passive: true }
+  );
+
+  // the panel opens below the whole header row, so there is a gap between the
+  // nav item and the panel where the pointer is outside the <details>
+  function pointerInGap(details) {
+    const menu = details.querySelector(".megamenu");
+    if (!menu) return false;
+    const item = details.getBoundingClientRect();
+    const panel = menu.getBoundingClientRect();
+    return (
+      pointer.y >= item.bottom &&
+      pointer.y <= panel.top + 2 &&
+      pointer.x >= panel.left &&
+      pointer.x <= panel.right
+    );
+  }
+
+  function closeUnlessInGap(details) {
+    if (pointerInGap(details)) {
+      closeTimer = setTimeout(() => closeUnlessInGap(details), 100);
+      return;
+    }
+    details.removeAttribute("open");
+  }
 
   items.forEach((details) => {
     details.addEventListener("mouseenter", () => {
@@ -537,7 +570,8 @@
 
     details.addEventListener("mouseleave", () => {
       if (!isDesktop()) return;
-      closeTimer = setTimeout(() => details.removeAttribute("open"), 150);
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(() => closeUnlessInGap(details), 150);
     });
   });
 
